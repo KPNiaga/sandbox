@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal Penetapan Harga Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+  <!-- Skrin Login -->
+  <div id="loginSection" class="flex min-h-screen items-center justify-center p-4">
+    <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md border border-slate-200">
+      <h2 class="text-2xl font-bold text-center mb-6 text-slate-800">Log Masuk Panel</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Emel</label>
+          <input type="email" id="emailInput" class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500" placeholder="nama@organisasi.my" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Kata Laluan</label>
+          <input type="password" id="passwordInput" class="w-full border rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" />
+        </div>
+        <button onclick="handleLogin()" id="btnLogin" class="w-full bg-blue-600 text-white font-medium py-2.5 rounded-lg hover:bg-blue-700 transition">Log Masuk</button>
+        <p id="authMsg" class="text-sm text-red-600 text-center mt-2"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skrin Utama Dashboard Panel -->
+  <div id="dashboardSection" class="hidden min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white border-b px-6 py-4 flex justify-between items-center shadow-sm">
+      <h1 class="text-xl font-bold text-slate-800">Panel Penetapan Harga SKU</h1>
+      <div class="flex items-center gap-4">
+        <span id="userBadge" class="text-sm font-medium text-slate-600"></span>
+        <button onclick="handleLogout()" class="text-sm bg-red-50 text-red-600 px-3 py-1.5 rounded-md hover:bg-red-100 transition">Log Keluar</button>
+      </div>
+    </header>
+
+    <main class="flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
+      <!-- Pilihan Syarikat -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <label for="companySelect" class="font-medium text-slate-700">Pilih Syarikat:</label>
+        <select id="companySelect" onchange="loadCompanySkus()" class="border rounded-lg p-2 min-w-[250px] outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">-- Sila Pilih Syarikat --</option>
+        </select>
+      </div>
+
+      <!-- Senarai Produk & Pengiraan Kos -->
+      <div id="skuListContainer" class="space-y-6"></div>
+    </main>
+  </div>
+
+  <script>
+    // URL dan Key yang telah diselaraskan
+    const SUPABASE_URL = "https://uqzilcoxykruromytkdc.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxemlsY294eWtydXJvbXl0a2RjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzODQ3MTAsImV4cCI6MjEwNjk2MDcxMH0.MFSnsnqUQ8EjyfLca5dq6_S65rutLS7eWXDi6UEX82E";
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentUser = null;
+
+    // Semak sesi login sedia ada
+    window.addEventListener("DOMContentLoaded", async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        currentUser = session.user;
+        showDashboard();
+      }
+    });
+
+    async function handleLogin() {
+      const email = document.getElementById("emailInput").value.trim();
+      const password = document.getElementById("passwordInput").value.trim();
+      const btn = document.getElementById("btnLogin");
+      const msg = document.getElementById("authMsg");
+
+      msg.innerText = "";
+      btn.innerText = "Sila tunggu...";
+      btn.disabled = true;
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        msg.innerText = error.message;
+        btn.innerText = "Log Masuk";
+        btn.disabled = false;
+        return;
+      }
+
+      currentUser = data.user;
+      showDashboard();
+    }
+
+    async function handleLogout() {
+      await supabase.auth.signOut();
+      window.location.reload();
+    }
+
+    async function showDashboard() {
+      document.getElementById("loginSection").classList.add("hidden");
+      document.getElementById("dashboardSection").classList.remove("hidden");
+      document.getElementById("userBadge").innerText = currentUser.email;
+      await fetchCompanies();
+    }
+
+    async function fetchCompanies() {
+      const { data, error } = await supabase
+        .from("sku_base_costs")
+        .select("company_name");
+
+      if (error) return console.error(error);
+
+      const uniqueCompanies = [...new Set(data.map(item => item.company_name))];
+      const select = document.getElementById("companySelect");
+      select.innerHTML = '<option value="">-- Sila Pilih Syarikat --</option>';
+      uniqueCompanies.forEach(c => {
+        select.innerHTML += `<option value="${c}">${c}</option>`;
+      });
+    }
+
+    async function loadCompanySkus() {
+      const company = document.getElementById("companySelect").value;
+      const container = document.getElementById("skuListContainer");
+      container.innerHTML = "";
+
+      if (!company) return;
+
+      // Ambil data SKU base
+      const { data: skus, error: skuError } = await supabase
+        .from("sku_base_costs")
+        .select("*")
+        .eq("company_name", company);
+
+      if (skuError) {
+        console.error(skuError);
+        return;
+      }
+
+      for (const item of skus) {
+        // Ambil kos inventori
+        const { data: inv } = await supabase
+          .from("sku_inventory_costs")
+          .select("*")
+          .eq("sku_code", item.sku_code)
+          .maybeSingle();
+
+        // Ambil kos logistik
+        const { data: logList } = await supabase
+          .from("sku_logistics_costs")
+          .select("*")
+          .eq("sku_code", item.sku_code);
+
+        // Ambil cadangan harga & undian
+        const { data: proposals } = await supabase
+          .from("price_proposals")
+          .select("*, proposal_votes(*)")
+          .eq("sku_code", item.sku_code);
+
+        renderSkuCard(item, inv, logList || [], proposals || []);
+      }
+    }
+
+    function renderSkuCard(sku, inv, logistics, proposals) {
+      const container = document.getElementById("skuListContainer");
+      
+      const invCard = inv ? `
+        <div class="bg-slate-50 p-3 rounded-lg text-sm border space-y-1">
+          <p class="font-semibold text-slate-700">Kos Gudang / Inventori:</p>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div>Handling In (Pallet): RM ${inv.handling_in_pallet}</div>
+            <div>Handling Out (Pallet): RM ${inv.handling_out_pallet}</div>
+            <div>Handling Out (Carton): RM ${inv.handling_out_carton}</div>
+            <div>Storage Bulanan: RM ${inv.storage_cost}</div>
+          </div>
+        </div>
+      ` : '<p class="text-xs text-slate-400 italic">Tiada rekod kos gudang / inventori.</p>';
+
+      const logRows = logistics.length > 0 ? logistics.map(l => 
+        `<tr><td class="px-2 py-1">${l.destination_zone}</td><td class="px-2 py-1 font-medium">RM ${l.delivery_rate}</td></tr>`
+      ).join("") : '<tr><td colspan="2" class="px-2 py-1 italic text-slate-400">Tiada zon khusus</td></tr>';
+
+      const proposalsHtml = proposals.map(p => {
+        const hasVoted = p.proposal_votes && p.proposal_votes.some(v => v.user_id === currentUser.id);
+        const voteCount = p.proposal_votes ? p.proposal_votes.length : 0;
+        return `
+          <div class="flex items-center justify-between bg-slate-50 p-3 rounded-lg border text-sm">
+            <div>
+              <span class="font-bold text-blue-600 text-base">RM ${parseFloat(p.proposed_price).toFixed(2)}</span>
+              <span class="text-xs text-slate-500 ml-2">(${p.target_zone})</span>
+              ${p.justification ? `<p class="text-xs text-slate-600 mt-0.5">Nota: ${p.justification}</p>` : ''}
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-xs font-semibold text-slate-600">${voteCount} Undian</span>
+              <button onclick="toggleVote('${p.id}', ${hasVoted})" class="text-xs px-3 py-1.5 rounded font-medium transition ${hasVoted ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'}">
+                ${hasVoted ? 'Disokong ✓' : 'Sokong / Undi'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      const card = `
+        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-4">
+          <div class="flex justify-between items-start border-b pb-3">
+            <div>
+              <span class="text-xs font-bold text-blue-600 uppercase bg-blue-50 px-2 py-0.5 rounded">${sku.sku_code}</span>
+              <h3 class="text-lg font-bold text-slate-800 mt-1">${sku.sku_name}</h3>
+            </div>
+            <div class="text-right text-sm">
+              <p class="text-slate-500">Kos Barangan: <span class="font-bold text-slate-800">RM ${sku.cost_price}</span></p>
+              <p class="text-slate-500">Harga Jualan Semasa: <span class="font-bold text-slate-800">RM ${sku.current_selling_price}</span></p>
+              ${sku.promo_price > 0 ? `<p class="text-slate-500">Harga Promosi: <span class="font-bold text-emerald-600">RM ${sku.promo_price}</span></p>` : ''}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${invCard}
+            <div class="bg-slate-50 p-3 rounded-lg text-sm border">
+              <p class="font-semibold text-slate-700 mb-1">Kadar Logistik (Mengikut Zon):</p>
+              <table class="w-full text-xs text-left">
+                <thead><tr class="text-slate-400"><th>Zon</th><th>Kadar</th></tr></thead>
+                <tbody>${logRows}</tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="border-t pt-3 space-y-3">
+            <h4 class="text-sm font-bold text-slate-700">Cadangan Harga Panel & Undian:</h4>
+            <div class="space-y-2">${proposalsHtml || '<p class="text-xs text-slate-400 italic">Belum ada cadangan harga dikemukakan.</p>'}</div>
+
+            <div class="flex gap-2 pt-2 items-center">
+              <input type="number" step="0.01" id="input-price-${sku.sku_code}" placeholder="Cadangan Harga (RM)" class="border text-sm p-2 rounded-lg w-40 outline-none focus:ring-2 focus:ring-blue-500" />
+              <input type="text" id="input-note-${sku.sku_code}" placeholder="Justifikasi / Catatan" class="border text-sm p-2 rounded-lg flex-1 outline-none focus:ring-2 focus:ring-blue-500" />
+              <button onclick="submitProposal('${sku.sku_code}')" class="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700 font-medium transition">Cadang</button>
+            </div>
+          </div>
+        </div>
+      `;
+      container.innerHTML += card;
+    }
+
+    async function submitProposal(skuCode) {
+      const priceInput = document.getElementById(`input-price-${skuCode}`);
+      const noteInput = document.getElementById(`input-note-${skuCode}`);
+      const price = parseFloat(priceInput.value);
+      const note = noteInput.value.trim();
+
+      if (!price || price <= 0) return alert("Sila masukkan nilai harga cadangan yang sah.");
+
+      const { error } = await supabase.from("price_proposals").insert({
+        sku_code: skuCode,
+        proposed_by: currentUser.id,
+        proposed_price: price,
+        justification: note
+      });
+
+      if (error) return alert(error.message);
+
+      priceInput.value = "";
+      noteInput.value = "";
+      await loadCompanySkus();
+    }
+
+    async function toggleVote(proposalId, hasVoted) {
+      if (hasVoted) {
+        await supabase.from("proposal_votes").delete().match({ proposal_id: proposalId, user_id: currentUser.id });
+      } else {
+        await supabase.from("proposal_votes").insert({ proposal_id: proposalId, user_id: currentUser.id });
+      }
+      await loadCompanySkus();
+    }
+  </script>
+</body>
+</html>
