@@ -133,9 +133,8 @@
           <div>
             <div class="flex items-center gap-2 mb-1">
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-indigo-500/30 text-indigo-300 border border-indigo-500/40">Kadar Standard</span>
-              <h2 id="cost-rate-name" class="text-sm font-semibold text-slate-200">Kadar Pengendalian Logistik</h2>
+              <h2 id="cost-rate-name" class="text-sm font-semibold text-slate-200">Pusat Pengedaran ANGKASA</h2>
             </div>
-            <p class="text-xs text-slate-400">Pengiraan kos se-karton dibahagikan mengikut saiz muatan (lalai: 100 karton / palet).</p>
           </div>
 
           <!-- Logistics Data Badges -->
@@ -634,7 +633,7 @@
       } else {
         // Fallback kepada kadar rasmi terkini
         inventoryCost = {
-          rate_name: 'Kadar Rasmi Gudang Standard',
+          rate_name: 'Pusat Pengedaran ANGKASA',
           pallet_in_cost: 8.50,
           pallet_out_cost: 8.50,
           carton_out_cost: 0.80,
@@ -642,7 +641,13 @@
         };
       }
 
-      document.getElementById('cost-rate-name').innerText = inventoryCost.rate_name || 'Kadar Rasmi Gudang';
+      // Selaraskan paparan nama pusat pengedaran
+      let displayedRateName = inventoryCost.rate_name || 'Pusat Pengedaran ANGKASA';
+      if (displayedRateName === 'Kadar Flat Gudang Utama' || displayedRateName === 'Kadar Rasmi Gudang Standard' || displayedRateName === 'Kadar Standard Gudang') {
+        displayedRateName = 'Pusat Pengedaran ANGKASA';
+      }
+
+      document.getElementById('cost-rate-name').innerText = displayedRateName;
       document.getElementById('cost-pallet-in').innerText = `RM ${parseFloat(inventoryCost.pallet_in_cost || 8.50).toFixed(2)}`;
       document.getElementById('cost-pallet-out').innerText = `RM ${parseFloat(inventoryCost.pallet_out_cost || 8.50).toFixed(2)}`;
       document.getElementById('cost-carton-out').innerText = `RM ${parseFloat(inventoryCost.carton_out_cost || 0.80).toFixed(2)}`;
