@@ -686,15 +686,33 @@
     async function fetchCompanySkus() {
       if (!selectedCompanyId) return;
 
-      const { data, error } = await supabaseClient
+      // Menyatakan hubungan FK !sku_id secara eksplisit bersama alias 'price_proposals'
+      let { data, error } = await supabaseClient
         .from('sku_master')
         .select(`
           *,
-          price_proposals(*, profiles(name, role)),
+          price_proposals:price_proposals!sku_id(*, profiles(name, role)),
           pricing_endorsements(*)
         `)
         .eq('company_id', selectedCompanyId)
         .order('created_at', { ascending: false });
+
+      // Pelan sokongan (fallback) jika versi PostgREST memerlukan nama constraint eksplisit
+      if (error && error.message && error.message.includes('relationship')) {
+        const fallbackRes = await supabaseClient
+          .from('sku_master')
+          .select(`
+            *,
+            price_proposals:price_proposals!price_proposals_sku_id_fkey(*, profiles(name, role)),
+            pricing_endorsements(*)
+          `)
+          .eq('company_id', selectedCompanyId)
+          .order('created_at', { ascending: false });
+        if (!fallbackRes.error) {
+          data = fallbackRes.data;
+          error = null;
+        }
+      }
 
       if (error) {
         showToast(error.message, 'error');
