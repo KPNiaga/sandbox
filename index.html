@@ -3,96 +3,86 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portal Penetapan Harga Panel</title>
+  <title>Portal Penetapan Harga Panel (KPNiaga)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen">
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
 
-  <!-- ==================== SKRIN LOG MASUK ==================== -->
+  <!-- Skrin Login -->
   <div id="loginSection" class="flex min-h-screen items-center justify-center p-4">
-    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md border border-slate-200">
-      <h2 class="text-2xl font-bold text-center mb-6 text-slate-800">Log Masuk Panel</h2>
+    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md border border-slate-100">
+      <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-slate-800">Portal Panel Harga</h2>
+        <p class="text-xs text-slate-500 mt-1">Sila log masuk menggunakan akaun panel anda</p>
+      </div>
       <div id="alertBox" class="hidden mb-4 p-3 rounded-lg text-xs font-medium"></div>
-
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Emel</label>
-          <input type="email" id="emailInput" class="w-full border rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500" placeholder="nama@organisasi.my" />
+          <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Emel</label>
+          <input type="email" id="emailInput" class="w-full border rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50" placeholder="nama@organisasi.my" />
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Kata Laluan</label>
+          <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Kata Laluan</label>
           <div class="relative">
-            <input type="password" id="passwordInput" class="w-full border rounded-lg p-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" />
-            <button type="button" id="btnTogglePassword" onclick="window.togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 select-none cursor-pointer">
-              <span id="eyeIcon">👁️</span>
-            </button>
+            <input type="password" id="passwordInput" class="w-full border rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50" placeholder="••••••••" />
+            <button type="button" id="btnTogglePassword" class="absolute right-3 top-3.5 text-xs text-slate-400 hover:text-slate-600">👁️</button>
           </div>
         </div>
-        <button type="button" id="btnLogin" onclick="window.handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition cursor-pointer text-sm shadow">Log Masuk</button>
+        <button id="btnLogin" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition shadow-md cursor-pointer text-sm">Log Masuk</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== SKRIN UTAMA DASHBOARD ==================== -->
+  <!-- Skrin Utama Dashboard Panel -->
   <div id="dashboardSection" class="hidden min-h-screen flex flex-col">
-    <header class="bg-white border-b px-6 py-4 flex justify-between items-center shadow-sm sticky top-0 z-30">
-      <h1 class="text-lg font-bold text-slate-800">Portal Konsensus Penetapan Harga SKU</h1>
-      <div class="flex items-center gap-3">
-        <span id="userBadge" class="text-xs bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full font-medium border"></span>
-        <button type="button" onclick="window.handleLogout()" class="text-xs bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-100 transition font-medium cursor-pointer">Log Keluar</button>
+    <!-- Header -->
+    <header class="bg-white border-b px-6 py-4 flex justify-between items-center shadow-xs">
+      <div>
+        <h1 class="text-lg font-bold text-slate-800">Portal Penilaian Harga SKU</h1>
+        <p class="text-xs text-slate-500">Angkatan Koperasi Kebangsaan Malaysia Berhad (ANGKASA)</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <span id="userBadge" class="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full"></span>
+        <button id="btnLogout" class="text-xs bg-red-50 text-red-600 px-3 py-1.5 rounded-lg font-semibold hover:bg-red-100 transition cursor-pointer">Log Keluar</button>
       </div>
     </header>
 
-    <main class="flex-1 p-6 max-w-[1550px] mx-auto w-full space-y-6">
-      <!-- Pilihan Syarikat & Status Kadar Gudang -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <label for="companySelect" class="text-sm font-bold text-slate-700">Pilih Syarikat:</label>
-          <select id="companySelect" onchange="window.onCompanySelectChange()" class="border rounded-xl p-2.5 text-sm min-w-[280px] bg-slate-50 outline-none focus:ring-2 focus:ring-blue-500 font-medium">
-            <option value="">-- Sila Pilih Syarikat --</option>
+    <main class="flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
+      <!-- Pilihan Syarikat -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4 w-full md:w-auto">
+          <label for="companySelect" class="font-semibold text-sm text-slate-700 whitespace-nowrap">Pilih Syarikat:</label>
+          <select id="companySelect" class="border rounded-xl p-2.5 text-sm w-full md:w-[320px] outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 font-medium">
+            <option value="">-- Sila Pilih Syarikat Pembekal --</option>
           </select>
-        </div>
-        <div id="rateInfoBadge" class="text-xs text-slate-500 bg-slate-50 border px-3 py-2 rounded-xl hidden">
-          Kadar Gudang Standard: <span id="whRatesText" class="font-semibold text-slate-700"></span>
         </div>
       </div>
 
-      <!-- Jadual Dinamik SKU -->
-      <div id="tableContainer" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <!-- Jadual SKU (Hanya muncul selepas syarikat dipilih) -->
+      <div id="tableContainer" class="hidden bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs text-slate-700 border-collapse">
-            <thead id="skuTableHead" class="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase text-[11px] tracking-wider font-semibold">
-            </thead>
-            <tbody id="skuTableBody" class="divide-y divide-slate-100">
-            </tbody>
+          <table id="skuTable" class="w-full text-left border-collapse text-xs">
+            <thead id="skuTableHead" class="bg-slate-100 text-slate-600 uppercase font-semibold text-[11px] border-b"></thead>
+            <tbody id="skuTableBody" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- Ruang Catatan & Pengesahan Konsensus -->
-      <div id="consensusSection" class="hidden bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-        <div>
-          <h3 class="text-sm font-bold text-slate-800 mb-2">Catatan / Justifikasi Panel</h3>
-          <textarea id="globalRemarks" rows="2" placeholder="Masukkan catatan umum bagi cadangan syarikat ini..." class="w-full border rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"></textarea>
+      <!-- Bahagian Cadangan Ahli Panel Lain & Pengesahan -->
+      <div id="consensusSection" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
+          <h3 class="font-bold text-sm text-slate-800">Cadangan Harga daripada Ahli Panel Lain</h3>
+          <div id="peerProposalsContainer" class="space-y-2 max-h-[250px] overflow-y-auto pr-1"></div>
         </div>
 
-        <div class="border-t pt-5">
-          <div class="flex justify-between items-center mb-3">
-            <div>
-              <h4 class="text-sm font-bold text-slate-800">Status Pengesahan Panel (Consensus Sign-Off)</h4>
-              <p class="text-xs text-slate-500">Tanda persetujuan muktamad panel terhadap cadangan harga.</p>
-            </div>
-            <button type="button" id="btnEndorse" onclick="window.toggleEndorsement()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow cursor-pointer">
-              Sahkan & Setuju
-            </button>
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
+          <h3 class="font-bold text-sm text-slate-800">Catatan & Pengesahan Konsensus</h3>
+          <textarea id="globalRemarks" placeholder="Masukkan justifikasi atau catatan keseluruhan mesyuarat panel di sini..." class="w-full border rounded-xl p-3 text-xs outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 h-20 resize-none"></textarea>
+          <div class="flex items-center justify-between pt-1">
+            <div id="endorsementList" class="grid grid-cols-2 gap-2 flex-1 mr-4"></div>
+            <button id="btnEndorse" class="text-xs font-semibold px-4 py-2.5 rounded-xl transition shadow-xs cursor-pointer">Sahkan & Setuju</button>
           </div>
-          <div id="endorsementList" class="grid grid-cols-1 md:grid-cols-3 gap-3"></div>
-        </div>
-
-        <div class="border-t pt-5">
-          <h4 class="text-sm font-bold text-slate-800 mb-3">Rujukan Cadangan & Undian Ahli Panel Lain</h4>
-          <div id="peerProposalsContainer" class="space-y-2"></div>
         </div>
       </div>
     </main>
@@ -109,98 +99,63 @@
     let skuListCache = [];
     let skuStateMap = {};
 
-    function initClient() {
-      if (window.supabase && typeof window.supabase.createClient === "function") {
-        sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      }
-    }
-    initClient();
-
-    window.showAlert = function(text, isError = true) {
+    function showAlert(text, isError = true) {
       const box = document.getElementById("alertBox");
-      if (!box) return;
       box.className = isError 
-        ? "mb-4 p-3 rounded-lg text-xs font-medium bg-red-50 text-red-700 border border-red-200 block"
-        : "mb-4 p-3 rounded-lg text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 block";
+        ? "mb-4 p-3 rounded-xl text-xs font-medium bg-red-50 text-red-700 border border-red-200 block"
+        : "mb-4 p-3 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 block";
       box.innerText = text;
-    };
+    }
 
-    window.togglePasswordVisibility = function() {
-      const p = document.getElementById("passwordInput");
-      const ico = document.getElementById("eyeIcon");
-      if (p.type === "password") {
-        p.type = "text";
-        ico.innerText = "🙈";
-      } else {
-        p.type = "password";
-        ico.innerText = "👁️";
-      }
-    };
-
-    window.handleLogin = async function() {
+    async function handleLogin() {
       const email = document.getElementById("emailInput").value.trim();
       const password = document.getElementById("passwordInput").value.trim();
       const btn = document.getElementById("btnLogin");
 
-      if (!email || !password) return window.showAlert("Sila masukkan emel dan kata laluan.");
-      if (!sbClient) initClient();
-
+      if (!email || !password) return showAlert("Sila masukkan emel dan kata laluan.");
       btn.innerText = "Memproses...";
       btn.disabled = true;
 
-      try {
-        const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
-        btn.innerText = "Log Masuk";
-        btn.disabled = false;
+      const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+      btn.innerText = "Log Masuk";
+      btn.disabled = false;
 
-        if (error) return window.showAlert("Gagal log masuk: " + error.message);
-        currentUser = data.user;
-        window.showDashboard();
-      } catch (err) {
-        btn.innerText = "Log Masuk";
-        btn.disabled = false;
-        window.showAlert("Ralat sistem: " + (err.message || err));
-      }
-    };
+      if (error) return showAlert("Gagal log masuk: " + error.message);
+      currentUser = data.user;
+      showDashboard();
+    }
 
-    window.handleLogout = async function() {
+    async function handleLogout() {
       if (sbClient) await sbClient.auth.signOut();
       window.location.reload();
-    };
+    }
 
-    window.showDashboard = async function() {
+    async function showDashboard() {
       document.getElementById("loginSection").classList.add("hidden");
       document.getElementById("dashboardSection").classList.remove("hidden");
       document.getElementById("userBadge").innerText = currentUser.email;
 
-      await window.loadMasterRates();
-      await window.fetchCompanies();
-    };
+      await loadMasterRates();
+      await fetchCompanies();
+    }
 
-    window.loadMasterRates = async function() {
+    async function loadMasterRates() {
       const { data: wh } = await sbClient.from("sku_inventory_costs").select("*").limit(1).maybeSingle();
       warehouseRates = wh || { handling_in_pallet: 0, handling_out_pallet: 0, handling_out_carton: 0, storage_cost: 0 };
       
-      const rateBadge = document.getElementById("rateInfoBadge");
-      const rateText = document.getElementById("whRatesText");
-      if (rateBadge && rateText) {
-        rateBadge.classList.remove("hidden");
-        rateText.innerText = `In: RM${Number(warehouseRates.handling_in_pallet).toFixed(2)}/plt | Storage: RM${Number(warehouseRates.storage_cost).toFixed(2)}/plt | Out (Plt): RM${Number(warehouseRates.handling_out_pallet).toFixed(2)}/plt | Out (Ctn): RM${Number(warehouseRates.handling_out_carton).toFixed(2)}/ctn`;
-      }
-
       const { data: log } = await sbClient.from("sku_logistics_costs").select("*");
       logisticsList = log || [];
-    };
+    }
 
-    window.fetchCompanies = async function() {
+    async function fetchCompanies() {
       const { data } = await sbClient.from("sku_base_costs").select("company_name");
       const unique = [...new Set((data || []).map(d => d.company_name))];
       const select = document.getElementById("companySelect");
-      select.innerHTML = '<option value="">-- Sila Pilih Syarikat --</option>';
+      select.innerHTML = '<option value="">-- Sila Pilih Syarikat Pembekal --</option>';
       unique.forEach(c => select.innerHTML += `<option value="${c}">${c}</option>`);
-    };
+    }
 
-    window.onCompanySelectChange = async function() {
+    async function onCompanySelectChange() {
       const company = document.getElementById("companySelect").value;
       const tableContainer = document.getElementById("tableContainer");
       const consensusSec = document.getElementById("consensusSection");
@@ -219,16 +174,16 @@
       skuListCache = skus || [];
       skuStateMap = {};
 
-      const states = [...new Set(logisticsList.map(l => l.state))];
-
       skuListCache.forEach(sku => {
+        const defaultZone = logisticsList.length > 0 ? logisticsList[0].destination_zone : "";
+        const defaultRate = logisticsList.length > 0 ? Number(logisticsList[0].delivery_rate) || 0 : 0;
+
         skuStateMap[sku.sku_code] = {
           cost_price: Number(sku.cost_price) || 0,
-          pallet_size: Number(sku.pallet_size) > 0 ? Number(sku.pallet_size) : 1,
-          is_warehouse: false,
-          state: states[0] || "",
-          area: "",
-          delivery_rate: 0,
+          pallet_size: Number(sku.pallet_size) || 50,
+          is_warehouse: false, // Default untick
+          destination_zone: defaultZone,
+          delivery_rate: defaultRate,
           cost_pallet: Number(sku.cost_price) || 0,
           cost_carton: Number(sku.cost_price) || 0,
           margin_direct: 0,
@@ -238,17 +193,18 @@
         };
       });
 
-      window.renderTable();
-      await window.loadCompanyEndorsements(company);
-      await window.loadPeerProposals(company);
-    };
+      renderTable();
+      await loadCompanyEndorsements(company);
+      await loadPeerProposals(company);
+    }
 
-    window.renderTable = function() {
+    function renderTable() {
       const thead = document.getElementById("skuTableHead");
       const tbody = document.getElementById("skuTableBody");
       const anyWarehouseChecked = Object.values(skuStateMap).some(item => item.is_warehouse);
 
       if (!anyWarehouseChecked) {
+        // Paparan Direct Ship (Default)
         thead.innerHTML = `
           <tr>
             <th class="p-3.5">Kod SKU</th>
@@ -256,37 +212,36 @@
             <th class="p-3.5 text-right">Kos / Karton (RM)</th>
             <th class="p-3.5 text-center">Masuk Gudang</th>
             <th class="p-3.5 text-right">Margin (%)</th>
-            <th class="p-3.5">Cadangan Harga Jual / Karton (RM)</th>
+            <th class="p-3.5">Cadangan Harga Jual (RM)</th>
             <th class="p-3.5 text-center">Tindakan</th>
           </tr>
         `;
       } else {
+        // Paparan Masuk Gudang (Ticked)
         thead.innerHTML = `
           <tr>
             <th class="p-3.5">Kod SKU</th>
             <th class="p-3.5">Nama SKU</th>
-            <th class="p-3.5 text-right">Kos Asal / Karton (RM)</th>
+            <th class="p-3.5 text-right">Kos / Karton (RM)</th>
             <th class="p-3.5 text-center">Masuk Gudang</th>
-            <th class="p-3.5 text-right bg-blue-50/50">Kos Keluar Pallet / Karton (RM)</th>
-            <th class="p-3.5 text-right bg-indigo-50/50">Kos Keluar Karton / Karton (RM)</th>
-            <th class="p-3.5">Negeri Destinasi</th>
-            <th class="p-3.5">Lokasi Destinasi</th>
-            <th class="p-3.5">Cadangan Harga Jual / Karton (RM)</th>
-            <th class="p-3.5 text-right bg-blue-50/50">Margin Keluar Pallet (%)</th>
-            <th class="p-3.5 text-right bg-indigo-50/50">Margin Keluar Karton (%)</th>
+            <th class="p-3.5 text-right">Kos Keluar Pallet (RM)</th>
+            <th class="p-3.5 text-right">Kos Keluar Karton (RM)</th>
+            <th class="p-3.5">Zon Destinasi</th>
+            <th class="p-3.5">Cadangan Harga Jual (RM)</th>
+            <th class="p-3.5 text-right">Margin Pallet (%)</th>
+            <th class="p-3.5 text-right">Margin Karton (%)</th>
             <th class="p-3.5 text-center">Tindakan</th>
           </tr>
         `;
       }
 
       tbody.innerHTML = "";
-      const states = [...new Set(logisticsList.map(l => l.state))];
+      const uniqueZones = [...new Set(logisticsList.map(l => l.destination_zone))];
 
       skuListCache.forEach(sku => {
         const stateData = skuStateMap[sku.sku_code];
         const row = document.createElement("tr");
         row.className = "hover:bg-slate-50 transition border-b border-slate-100";
-        row.id = `row-${sku.sku_code}`;
 
         const isChecked = stateData.is_warehouse ? "checked" : "";
         const priceVal = stateData.proposed_price > 0 ? stateData.proposed_price : "";
@@ -294,110 +249,74 @@
         if (!anyWarehouseChecked) {
           row.innerHTML = `
             <td class="p-3.5 font-bold text-blue-600">${sku.sku_code}</td>
-            <td class="p-3.5 font-medium text-slate-800 max-w-[220px] truncate" title="${sku.sku_name}">
-              ${sku.sku_name}
-              <span class="block text-[10px] text-slate-400 font-normal">Saiz Pallet: ${stateData.pallet_size} ctn/plt</span>
-            </td>
+            <td class="p-3.5 font-medium text-slate-800 max-w-[220px] truncate" title="${sku.sku_name}">${sku.sku_name}</td>
             <td class="p-3.5 text-right font-semibold">RM ${stateData.cost_price.toFixed(2)}</td>
             <td class="p-3.5 text-center">
-              <input type="checkbox" id="wh-${sku.sku_code}" onchange="window.toggleWarehouse('${sku.sku_code}')" ${isChecked} class="w-4 h-4 text-blue-600 rounded cursor-pointer" />
+              <input type="checkbox" onchange="toggleWarehouse('${sku.sku_code}')" ${isChecked} class="w-4 h-4 text-blue-600 rounded cursor-pointer" />
             </td>
             <td class="p-3.5 text-right font-bold" id="margin-direct-${sku.sku_code}">${stateData.margin_direct.toFixed(1)}%</td>
             <td class="p-3.5">
-              <input type="number" step="0.01" id="price-${sku.sku_code}" value="${priceVal}" oninput="window.recalculate('${sku.sku_code}')" placeholder="0.00" class="border rounded-lg p-1.5 text-xs w-28 font-semibold text-right outline-none focus:ring-2 focus:ring-blue-500" />
+              <input type="number" step="0.01" id="price-${sku.sku_code}" value="${priceVal}" oninput="recalculate('${sku.sku_code}')" placeholder="0.00" class="border rounded-xl p-2 text-xs w-32 font-semibold text-right outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50" />
             </td>
             <td class="p-3.5 text-center">
-              <button onclick="window.saveSkuProposal('${sku.sku_code}')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition cursor-pointer shadow-sm">
+              <button onclick="saveSkuProposal('${sku.sku_code}')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3.5 py-2 rounded-xl font-semibold transition cursor-pointer shadow-xs">
                 Simpan
               </button>
             </td>
           `;
         } else {
-          const stateOptions = states.map(s => `<option value="${s}" ${s === stateData.state ? 'selected' : ''}>${s}</option>`).join("");
-          const filteredAreas = logisticsList.filter(l => l.state === stateData.state);
-          const areaOptions = filteredAreas.map(a => `<option value="${a.area}" data-rate="${a.delivery_rate}" ${a.area === stateData.area ? 'selected' : ''}>${a.area} (RM${Number(a.delivery_rate).toFixed(2)})</option>`).join("");
+          const zoneOptions = uniqueZones.map(z => {
+            const match = logisticsList.find(l => l.destination_zone === z && l.sku_code === sku.sku_code) || logisticsList.find(l => l.destination_zone === z);
+            const rate = match ? match.delivery_rate : 0;
+            return `<option value="${z}" data-rate="${rate}" ${z === stateData.destination_zone ? 'selected' : ''}>${z} (RM${Number(rate).toFixed(2)})</option>`;
+          }).join("");
 
           row.innerHTML = `
             <td class="p-3.5 font-bold text-blue-600">${sku.sku_code}</td>
-            <td class="p-3.5 font-medium text-slate-800 max-w-[190px] truncate" title="${sku.sku_name}">
-              ${sku.sku_name}
-              <span class="block text-[10px] text-slate-400 font-normal">Saiz Pallet: ${stateData.pallet_size} ctn/plt</span>
-            </td>
+            <td class="p-3.5 font-medium text-slate-800 max-w-[180px] truncate" title="${sku.sku_name}">${sku.sku_name}</td>
             <td class="p-3.5 text-right font-semibold">RM ${stateData.cost_price.toFixed(2)}</td>
             <td class="p-3.5 text-center">
-              <input type="checkbox" id="wh-${sku.sku_code}" onchange="window.toggleWarehouse('${sku.sku_code}')" ${isChecked} class="w-4 h-4 text-blue-600 rounded cursor-pointer" />
+              <input type="checkbox" onchange="toggleWarehouse('${sku.sku_code}')" ${isChecked} class="w-4 h-4 text-blue-600 rounded cursor-pointer" />
             </td>
-            <td class="p-3.5 text-right font-bold text-blue-700 bg-blue-50/30" id="cost-pallet-${sku.sku_code}">RM ${stateData.cost_pallet.toFixed(2)}</td>
-            <td class="p-3.5 text-right font-bold text-indigo-700 bg-indigo-50/30" id="cost-carton-${sku.sku_code}">RM ${stateData.cost_carton.toFixed(2)}</td>
+            <td class="p-3.5 text-right font-bold text-slate-800" id="cost-pallet-${sku.sku_code}">RM ${stateData.cost_pallet.toFixed(2)}</td>
+            <td class="p-3.5 text-right font-bold text-slate-800" id="cost-carton-${sku.sku_code}">RM ${stateData.cost_carton.toFixed(2)}</td>
             <td class="p-3.5">
-              <select id="state-${sku.sku_code}" onchange="window.onStateChange('${sku.sku_code}')" class="border rounded-lg p-1.5 text-xs bg-white outline-none">
-                ${stateOptions}
+              <select id="zone-${sku.sku_code}" onchange="onZoneChange('${sku.sku_code}')" class="border rounded-xl p-2 text-xs bg-slate-50 outline-none min-w-[140px]">
+                ${zoneOptions}
               </select>
             </td>
             <td class="p-3.5">
-              <select id="area-${sku.sku_code}" onchange="window.onAreaChange('${sku.sku_code}')" class="border rounded-lg p-1.5 text-xs bg-white outline-none min-w-[130px]">
-                ${areaOptions}
-              </select>
+              <input type="number" step="0.01" id="price-${sku.sku_code}" value="${priceVal}" oninput="recalculate('${sku.sku_code}')" placeholder="0.00" class="border rounded-xl p-2 text-xs w-28 font-semibold text-right outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50" />
             </td>
-            <td class="p-3.5">
-              <input type="number" step="0.01" id="price-${sku.sku_code}" value="${priceVal}" oninput="window.recalculate('${sku.sku_code}')" placeholder="0.00" class="border rounded-lg p-1.5 text-xs w-28 font-semibold text-right outline-none focus:ring-2 focus:ring-blue-500" />
-            </td>
-            <td class="p-3.5 text-right font-bold bg-blue-50/30" id="margin-pallet-${sku.sku_code}">${stateData.margin_pallet.toFixed(1)}%</td>
-            <td class="p-3.5 text-right font-bold bg-indigo-50/30" id="margin-carton-${sku.sku_code}">${stateData.margin_carton.toFixed(1)}%</td>
+            <td class="p-3.5 text-right font-bold" id="margin-pallet-${sku.sku_code}">${stateData.margin_pallet.toFixed(1)}%</td>
+            <td class="p-3.5 text-right font-bold" id="margin-carton-${sku.sku_code}">${stateData.margin_carton.toFixed(1)}%</td>
             <td class="p-3.5 text-center">
-              <button onclick="window.saveSkuProposal('${sku.sku_code}')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition cursor-pointer shadow-sm">
+              <button onclick="saveSkuProposal('${sku.sku_code}')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3.5 py-2 rounded-xl font-semibold transition cursor-pointer shadow-xs">
                 Simpan
               </button>
             </td>
           `;
         }
         tbody.appendChild(row);
-
-        if (stateData.is_warehouse && !stateData.area) {
-          window.onStateChange(sku.sku_code, false);
-        }
-        window.recalculate(sku.sku_code);
+        recalculate(sku.sku_code);
       });
-    };
+    }
 
-    window.toggleWarehouse = function(skuCode) {
-      const checkbox = document.getElementById(`wh-${skuCode}`);
-      skuStateMap[skuCode].is_warehouse = checkbox.checked;
-      window.renderTable();
-    };
+    function toggleWarehouse(skuCode) {
+      skuStateMap[skuCode].is_warehouse = !skuStateMap[skuCode].is_warehouse;
+      renderTable();
+    }
 
-    window.onStateChange = function(skuCode, triggerRecalc = true) {
-      const stateSelect = document.getElementById(`state-${skuCode}`);
-      const areaSelect = document.getElementById(`area-${skuCode}`);
-      if (!stateSelect || !areaSelect) return;
-
-      const selectedState = stateSelect.value;
-      skuStateMap[skuCode].state = selectedState;
-
-      const filteredAreas = logisticsList.filter(l => l.state === selectedState);
-      areaSelect.innerHTML = filteredAreas.map(a => `<option value="${a.area}" data-rate="${a.delivery_rate}">${a.area} (RM${Number(a.delivery_rate).toFixed(2)})</option>`).join("");
-
-      if (filteredAreas.length > 0) {
-        skuStateMap[skuCode].area = filteredAreas[0].area;
-        skuStateMap[skuCode].delivery_rate = Number(filteredAreas[0].delivery_rate) || 0;
-      } else {
-        skuStateMap[skuCode].area = "";
-        skuStateMap[skuCode].delivery_rate = 0;
-      }
-
-      if (triggerRecalc) window.recalculate(skuCode);
-    };
-
-    window.onAreaChange = function(skuCode) {
-      const areaSelect = document.getElementById(`area-${skuCode}`);
-      if (!areaSelect) return;
-      const opt = areaSelect.options[areaSelect.selectedIndex];
-      skuStateMap[skuCode].area = opt ? opt.value : "";
+    function onZoneChange(skuCode) {
+      const zoneSelect = document.getElementById(`zone-${skuCode}`);
+      if (!zoneSelect) return;
+      const opt = zoneSelect.options[zoneSelect.selectedIndex];
+      skuStateMap[skuCode].destination_zone = opt ? opt.value : "";
       skuStateMap[skuCode].delivery_rate = opt ? parseFloat(opt.getAttribute("data-rate")) || 0 : 0;
-      window.recalculate(skuCode);
-    };
+      recalculate(skuCode);
+    }
 
-    window.recalculate = function(skuCode) {
+    function recalculate(skuCode) {
       const stateData = skuStateMap[skuCode];
       if (!stateData) return;
 
@@ -406,12 +325,7 @@
       stateData.proposed_price = price;
 
       if (!stateData.is_warehouse) {
-        // Direct Ship: Kos asas sekarton sahaja
-        const costDirect = stateData.cost_price;
-        let margin = 0;
-        if (price > 0) {
-          margin = ((price - costDirect) / price) * 100;
-        }
+        let margin = price > 0 ? ((price - stateData.cost_price) / price) * 100 : 0;
         stateData.margin_direct = margin;
 
         const marginEl = document.getElementById(`margin-direct-${skuCode}`);
@@ -420,31 +334,23 @@
           marginEl.className = margin >= 15 ? "p-3.5 text-right font-bold text-emerald-600" : (margin > 0 ? "p-3.5 text-right font-bold text-amber-600" : "p-3.5 text-right font-bold text-red-500");
         }
       } else {
-        // Masuk Gudang: Pengiraan berasaskan unit sekarton
-        const areaSelect = document.getElementById(`area-${skuCode}`);
-        const selectedOpt = areaSelect ? areaSelect.options[areaSelect.selectedIndex] : null;
-        const deliveryRate = selectedOpt ? parseFloat(selectedOpt.getAttribute("data-rate")) || 0 : stateData.delivery_rate;
-
-        const palletSize = stateData.pallet_size;
-
-        // Kos Gudang Sekarton
-        const inCostPerCtn = (Number(warehouseRates.handling_in_pallet) || 0) / palletSize;
-        const storageCostPerCtn = (Number(warehouseRates.storage_cost) || 0) / palletSize;
-        const baseWhPerCtn = inCostPerCtn + storageCostPerCtn;
-
-        const outPalletPerCtn = (Number(warehouseRates.handling_out_pallet) || 0) / palletSize;
-        const outCartonPerCtn = Number(warehouseRates.handling_out_carton) || 0;
-
-        // Kos Landed Lengkap Sekarton
-        const costPallet = stateData.cost_price + baseWhPerCtn + outPalletPerCtn + deliveryRate;
-        const costCarton = stateData.cost_price + baseWhPerCtn + outCartonPerCtn + deliveryRate;
-
-        let marginPallet = 0;
-        let marginCarton = 0;
-        if (price > 0) {
-          marginPallet = ((price - costPallet) / price) * 100;
-          marginCarton = ((price - costCarton) / price) * 100;
+        const zoneSelect = document.getElementById(`zone-${skuCode}`);
+        if (zoneSelect) {
+          const opt = zoneSelect.options[zoneSelect.selectedIndex];
+          stateData.delivery_rate = opt ? parseFloat(opt.getAttribute("data-rate")) || 0 : 0;
         }
+
+        const palletSize = stateData.pallet_size > 0 ? stateData.pallet_size : 50;
+        const inCost = (Number(warehouseRates.handling_in_pallet) || 0) / palletSize;
+        const storageCost = (Number(warehouseRates.storage_cost) || 0) / palletSize;
+        const outPalletCost = (Number(warehouseRates.handling_out_pallet) || 0) / palletSize;
+        const outCartonCost = Number(warehouseRates.handling_out_carton) || 0;
+
+        const costPallet = stateData.cost_price + inCost + storageCost + outPalletCost + stateData.delivery_rate;
+        const costCarton = stateData.cost_price + inCost + storageCost + outCartonCost + stateData.delivery_rate;
+
+        let marginPallet = price > 0 ? ((price - costPallet) / price) * 100 : 0;
+        let marginCarton = price > 0 ? ((price - costCarton) / price) * 100 : 0;
 
         stateData.cost_pallet = costPallet;
         stateData.cost_carton = costCarton;
@@ -458,24 +364,23 @@
 
         if (elCostPallet) elCostPallet.innerText = `RM ${costPallet.toFixed(2)}`;
         if (elCostCarton) elCostCarton.innerText = `RM ${costCarton.toFixed(2)}`;
-        
         if (elMarginPallet) {
           elMarginPallet.innerText = `${marginPallet.toFixed(1)}%`;
-          elMarginPallet.className = marginPallet >= 15 ? "p-3.5 text-right font-bold text-emerald-600 bg-blue-50/30" : (marginPallet > 0 ? "p-3.5 text-right font-bold text-amber-600 bg-blue-50/30" : "p-3.5 text-right font-bold text-red-500 bg-blue-50/30");
+          elMarginPallet.className = marginPallet >= 15 ? "p-3.5 text-right font-bold text-emerald-600" : (marginPallet > 0 ? "p-3.5 text-right font-bold text-amber-600" : "p-3.5 text-right font-bold text-red-500");
         }
         if (elMarginCarton) {
           elMarginCarton.innerText = `${marginCarton.toFixed(1)}%`;
-          elMarginCarton.className = marginCarton >= 15 ? "p-3.5 text-right font-bold text-emerald-600 bg-indigo-50/30" : (marginCarton > 0 ? "p-3.5 text-right font-bold text-amber-600 bg-indigo-50/30" : "p-3.5 text-right font-bold text-red-500 bg-indigo-50/30");
+          elMarginCarton.className = marginCarton >= 15 ? "p-3.5 text-right font-bold text-emerald-600" : (marginCarton > 0 ? "p-3.5 text-right font-bold text-amber-600" : "p-3.5 text-right font-bold text-red-500");
         }
       }
-    };
+    }
 
-    window.saveSkuProposal = async function(skuCode) {
+    async function saveSkuProposal(skuCode) {
       const stateData = skuStateMap[skuCode];
       const note = document.getElementById("globalRemarks").value.trim();
 
       if (!stateData.proposed_price || stateData.proposed_price <= 0) {
-        return alert("Sila masukkan nilai Cadangan Harga Jual / Karton terlebih dahulu.");
+        return alert("Sila masukkan nilai Cadangan Harga Jual terlebih dahulu.");
       }
 
       const payload = {
@@ -483,27 +388,20 @@
         proposed_by: currentUser.id,
         proposed_price: stateData.proposed_price,
         is_warehouse: stateData.is_warehouse,
-        target_state: stateData.is_warehouse ? stateData.state : 'Direct Ship',
-        target_area: stateData.is_warehouse ? stateData.area : 'Direct Ship',
-        target_zone: stateData.is_warehouse ? `${stateData.state} - ${stateData.area}` : 'Direct Ship',
+        target_zone: stateData.is_warehouse ? stateData.destination_zone : 'Direct Ship',
         total_cost: stateData.is_warehouse ? stateData.cost_carton : stateData.cost_price,
-        total_cost_pallet: stateData.is_warehouse ? stateData.cost_pallet : stateData.cost_price,
-        total_cost_carton: stateData.is_warehouse ? stateData.cost_carton : stateData.cost_price,
         margin_pct: stateData.is_warehouse ? stateData.margin_carton : stateData.margin_direct,
-        margin_pallet: stateData.is_warehouse ? stateData.margin_pallet : stateData.margin_direct,
-        margin_carton: stateData.is_warehouse ? stateData.margin_carton : stateData.margin_direct,
         justification: note
       };
 
       const { error } = await sbClient.from("price_proposals").insert(payload);
       if (error) return alert("Ralat menyimpan cadangan: " + error.message);
 
-      alert(`Cadangan harga sekarton bagi ${skuCode} berjaya disimpan!`);
-      const company = document.getElementById("companySelect").value;
-      await window.loadPeerProposals(company);
-    };
+      alert(`Cadangan harga untuk ${skuCode} berjaya disimpan!`);
+      loadPeerProposals(document.getElementById("companySelect").value);
+    }
 
-    window.loadPeerProposals = async function(company) {
+    async function loadPeerProposals(company) {
       const container = document.getElementById("peerProposalsContainer");
       container.innerHTML = '<p class="text-xs text-slate-400">Memuatkan cadangan ahli...</p>';
 
@@ -528,33 +426,31 @@
           <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border text-xs">
             <div>
               <span class="font-bold text-blue-600 mr-2">${p.sku_code}</span>
-              <span class="font-bold text-slate-800 text-sm">RM ${Number(p.proposed_price).toFixed(2)} /ctn</span>
-              <span class="text-slate-500 ml-2">(${p.is_warehouse ? p.target_zone : 'Direct Ship'})</span>
-              <span class="ml-2 text-slate-400">Margin Pallet: ${Number(p.margin_pallet || 0).toFixed(1)}% | Margin Karton: ${Number(p.margin_carton || 0).toFixed(1)}%</span>
-              ${p.justification ? `<p class="text-slate-500 mt-1 italic">Catatan: "${p.justification}"</p>` : ''}
+              <span class="font-bold text-slate-800 text-sm">RM ${Number(p.proposed_price).toFixed(2)}</span>
+              <span class="text-slate-500 ml-2">(${p.target_zone})</span>
+              ${p.justification ? `<p class="text-slate-500 mt-0.5 italic">Nota: "${p.justification}"</p>` : ''}
             </div>
             <div class="flex items-center gap-3">
               <span class="font-bold text-slate-600">${votes} Sokongan</span>
-              <button onclick="window.toggleVote('${p.id}', ${hasVoted})" class="px-3 py-1.5 rounded-lg font-medium transition cursor-pointer ${hasVoted ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'}">
+              <button onclick="toggleVote('${p.id}', ${hasVoted})" class="px-3 py-1.5 rounded-lg font-medium transition cursor-pointer ${hasVoted ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'}">
                 ${hasVoted ? 'Disokong ✓' : 'Sokong'}
               </button>
             </div>
           </div>
         `;
       }).join("");
-    };
+    }
 
-    window.toggleVote = async function(proposalId, hasVoted) {
+    async function toggleVote(proposalId, hasVoted) {
       if (hasVoted) {
         await sbClient.from("proposal_votes").delete().match({ proposal_id: proposalId, user_id: currentUser.id });
       } else {
         await sbClient.from("proposal_votes").insert({ proposal_id: proposalId, user_id: currentUser.id });
       }
-      const company = document.getElementById("companySelect").value;
-      window.loadPeerProposals(company);
-    };
+      loadPeerProposals(document.getElementById("companySelect").value);
+    }
 
-    window.loadCompanyEndorsements = async function(company) {
+    async function loadCompanyEndorsements(company) {
       const container = document.getElementById("endorsementList");
       const btnEndorse = document.getElementById("btnEndorse");
 
@@ -562,28 +458,27 @@
       const list = endorsements || [];
 
       const hasEndorsed = list.some(e => e.user_id === currentUser.id);
-      btnEndorse.innerText = hasEndorsed ? "Tarik Semula Persetujuan" : "Sahkan & Setuju";
+      btnEndorse.innerText = hasEndorsed ? "Tarik Semula" : "Sahkan & Setuju";
       btnEndorse.className = hasEndorsed 
-        ? "bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 text-xs font-semibold px-4 py-2 rounded-xl transition cursor-pointer"
-        : "bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow cursor-pointer";
+        ? "bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 text-xs font-semibold px-4 py-2.5 rounded-xl transition cursor-pointer"
+        : "bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition shadow-xs cursor-pointer";
 
       if (list.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-400 italic col-span-3">Belum ada pengesahan dibuat bagi syarikat ini.</p>';
+        container.innerHTML = '<p class="text-xs text-slate-400 italic">Belum ada pengesahan.</p>';
         return;
       }
 
       container.innerHTML = list.map(e => `
-        <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl flex items-center gap-2">
+        <div class="bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl flex items-center gap-2">
           <span class="text-emerald-600 font-bold">✓</span>
-          <div>
-            <p class="text-xs font-bold text-slate-800">${e.user_email}</p>
-            <p class="text-[10px] text-slate-500">${new Date(e.created_at).toLocaleString('ms-MY')}</p>
+          <div class="truncate">
+            <p class="text-[11px] font-bold text-slate-800 truncate">${e.user_email}</p>
           </div>
         </div>
       `).join("");
-    };
+    }
 
-    window.toggleEndorsement = async function() {
+    async function toggleEndorsement() {
       const company = document.getElementById("companySelect").value;
       if (!company) return;
 
@@ -599,16 +494,31 @@
           remarks: document.getElementById("globalRemarks").value.trim()
         });
       }
-      window.loadCompanyEndorsements(company);
-    };
+      loadCompanyEndorsements(company);
+    }
 
     window.addEventListener("DOMContentLoaded", () => {
-      initClient();
+      document.getElementById("btnTogglePassword").addEventListener("click", () => {
+        const p = document.getElementById("passwordInput");
+        const ico = document.getElementById("btnTogglePassword");
+        p.type = p.type === "password" ? "text" : "password";
+        ico.innerText = p.type === "password" ? "👁️" : "🙈";
+      });
+
+      if (window.supabase && typeof window.supabase.createClient === "function") {
+        sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+
+      document.getElementById("btnLogin").addEventListener("click", handleLogin);
+      document.getElementById("btnLogout").addEventListener("click", handleLogout);
+      document.getElementById("companySelect").addEventListener("change", onCompanySelectChange);
+      document.getElementById("btnEndorse").addEventListener("click", toggleEndorsement);
+
       if (sbClient) {
         sbClient.auth.getSession().then(({ data: { session } }) => {
           if (session) {
             currentUser = session.user;
-            window.showDashboard();
+            showDashboard();
           }
         });
       }
