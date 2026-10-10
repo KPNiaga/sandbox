@@ -37,6 +37,7 @@
 
   <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
 
+  <!-- 1. Skrin Log Masuk -->
   <div id="auth-view" class="flex-1 flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white border border-slate-200 shadow-xl rounded-2xl p-8 transition-all">
       <div class="flex items-center gap-3 mb-6">
@@ -49,7 +50,7 @@
         </div>
       </div>
 
-      <!-- Login Form (Direct Sign-in Only) -->
+      <!-- Borang Log Masuk -->
       <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1">Emel Rasmi Panel</label>
@@ -88,6 +89,7 @@
     </div>
   </div>
 
+  <!-- 2. Ruang Kerja Utama (Aplikasi) -->
   <div id="app-view" class="hidden flex-1 flex flex-col">
     <!-- Navbar Header -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
@@ -124,15 +126,16 @@
     <!-- Main Workspace -->
     <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 flex flex-col gap-6">
 
+      <!-- Kad Ringkasan Kadar Logistik DC -->
       <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden">
         <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-indigo-500/10 rounded-full blur-2xl"></div>
         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div class="flex items-center gap-2 mb-1">
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-indigo-500/30 text-indigo-300 border border-indigo-500/40">Gudang Standard</span>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-indigo-500/30 text-indigo-300 border border-indigo-500/40">Kadar Standard</span>
               <h2 id="cost-rate-name" class="text-sm font-semibold text-slate-200">Kadar Pengendalian Logistik</h2>
             </div>
-            <p class="text-xs text-slate-400">Kadar kos operasi gudang (Flat Rate) untuk rujukan penilaian margin SKU.</p>
+            <p class="text-xs text-slate-400">Pengiraan kos se-karton dibahagikan mengikut saiz muatan (lalai: 100 karton / palet).</p>
           </div>
 
           <!-- Logistics Data Badges -->
@@ -140,23 +143,28 @@
             <div>
               <p class="text-[10px] text-slate-400 uppercase tracking-wider">Pallet In</p>
               <p id="cost-pallet-in" class="font-bold text-white text-sm">RM --</p>
+              <span class="text-[9px] text-slate-400 block">per palet</span>
+            </div>
+            <div>
+              <p class="text-[10px] text-slate-400 uppercase tracking-wider">Storage</p>
+              <p id="cost-storage" class="font-bold text-white text-sm">RM --</p>
+              <span class="text-[9px] text-slate-400 block">per palet</span>
             </div>
             <div>
               <p class="text-[10px] text-slate-400 uppercase tracking-wider">Pallet Out</p>
               <p id="cost-pallet-out" class="font-bold text-white text-sm">RM --</p>
+              <span class="text-[9px] text-slate-400 block">per palet</span>
             </div>
             <div>
               <p class="text-[10px] text-slate-400 uppercase tracking-wider">Carton Out</p>
               <p id="cost-carton-out" class="font-bold text-white text-sm">RM --</p>
-            </div>
-            <div>
-              <p class="text-[10px] text-slate-400 uppercase tracking-wider">Storage / Pallet</p>
-              <p id="cost-storage" class="font-bold text-white text-sm">RM --</p>
+              <span class="text-[9px] text-indigo-300 block">per karton</span>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- Pemilihan Syarikat Pembekal & Tindakan Admin -->
       <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="flex-1 max-w-md">
           <label for="company-select" class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
@@ -183,12 +191,13 @@
         </div>
       </div>
 
+      <!-- Jadual Utama Senarai SKU -->
       <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col flex-1">
         <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
           <div>
             <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
               <i class="ph-bold ph-list-numbers text-indigo-600"></i>
-              <span>Senarai SKU & Status Penentuan Harga</span>
+              <span>Senarai SKU & Status Penentuan Harga (Se-Karton)</span>
             </h3>
             <p id="table-subtitle" class="text-xs text-slate-500">Pilih syarikat di atas untuk memuatkan senarai SKU.</p>
           </div>
@@ -204,12 +213,12 @@
             <thead class="bg-slate-100/75 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               <tr>
                 <th class="py-3.5 px-4">Maklumat Produk & Kod</th>
-                <th class="py-3.5 px-4 text-center">Saiz Palet</th>
-                <th class="py-3.5 px-4 text-right">Harga Kos (RM)</th>
+                <th class="py-3.5 px-4 text-center">Masuk DC?</th>
+                <th class="py-3.5 px-4 text-right">Analisis Kos Pokok Se-Karton</th>
                 <th class="py-3.5 px-4 text-center">Status Pusingan</th>
-                <th class="py-3.5 px-4">Cadangan Harga Panel</th>
+                <th class="py-3.5 px-4">Cadangan Harga & Margin Se-Karton</th>
                 <th class="py-3.5 px-4 text-center">Keputusan / Undian</th>
-                <th class="py-3.5 px-4 text-right">Tindakan Anda</th>
+                <th class="py-3.5 px-4 text-right">Tindakan</th>
               </tr>
             </thead>
             <tbody id="sku-table-body" class="divide-y divide-slate-100">
@@ -226,31 +235,31 @@
     </main>
   </div>
 
-  <!-- 1. Modal Cadang Harga (Panel) -->
+  <!-- Modal Cadang Harga (Panel - Tambah Justifikasi Penuh) -->
   <div id="modal-proposal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 transition-all">
       <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
         <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
           <i class="ph-bold ph-tag text-indigo-600"></i>
-          <span>Cadang Harga Jualan</span>
+          <span>Cadang Harga Jualan Se-Karton</span>
         </h3>
         <button onclick="closeModal('modal-proposal')" class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
       </div>
 
       <div class="bg-slate-50 p-3 rounded-xl mb-4 text-xs space-y-1">
         <p class="font-semibold text-slate-800" id="prop-sku-name">Nama SKU</p>
-        <p class="text-slate-500">Kos Asas: <span class="font-bold text-slate-700" id="prop-cost-price">RM 0.00</span></p>
+        <p class="text-slate-500">Kos Asas Se-Karton: <span class="font-bold text-slate-700" id="prop-cost-price">RM 0.00</span></p>
       </div>
 
       <form id="form-proposal" onsubmit="submitProposal(event)" class="space-y-4">
         <input type="hidden" id="prop-sku-id">
         <div>
-          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Cadangan Harga Jual (RM)</label>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Cadangan Harga Jual Se-Karton (RM)</label>
           <input type="number" step="0.01" min="0" required id="prop-price-input" placeholder="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600">
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Justifikasi / Catatan</label>
-          <textarea id="prop-justification-input" rows="3" placeholder="Contoh: Berdasarkan purata pasaran & margin keuntungan 25%" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"></textarea>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Justifikasi / Catatan Panel</label>
+          <textarea id="prop-justification-input" rows="3" placeholder="Contoh: Berdasarkan purata pasaran & margin keuntungan Pallet Out > 28%" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"></textarea>
         </div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" onclick="closeModal('modal-proposal')" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-xl">Batal</button>
@@ -260,7 +269,7 @@
     </div>
   </div>
 
-  <!-- 2. Modal Tambah Syarikat (Admin) -->
+  <!-- Modal Tambah Syarikat (Admin) -->
   <div id="modal-add-company" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
       <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
@@ -288,7 +297,7 @@
     </div>
   </div>
 
-  <!-- 3. Modal Tambah SKU (Admin) -->
+  <!-- Modal Tambah SKU (Admin) -->
   <div id="modal-add-sku" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
       <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
@@ -306,8 +315,8 @@
             <input type="text" id="new-sku-code" required placeholder="cth: BEV-001" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm uppercase">
           </div>
           <div>
-            <label class="block font-semibold text-slate-600 uppercase mb-1">Saiz Palet</label>
-            <input type="text" id="new-sku-pallet" placeholder="100x120cm" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm">
+            <label class="block font-semibold text-slate-600 uppercase mb-1">Muatan Palet (Bil. Karton)</label>
+            <input type="text" id="new-sku-pallet" placeholder="100" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm">
           </div>
         </div>
         <div>
@@ -315,7 +324,7 @@
           <input type="text" id="new-sku-name" required placeholder="Jus Epal 250ml (Karton)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm">
         </div>
         <div>
-          <label class="block font-semibold text-slate-600 uppercase mb-1">Harga Kos Asas (RM)</label>
+          <label class="block font-semibold text-slate-600 uppercase mb-1">Harga Kos Asas Se-Karton (RM)</label>
           <input type="number" step="0.01" min="0" id="new-sku-cost" required placeholder="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-bold">
         </div>
         <div class="flex justify-end gap-2 pt-3">
@@ -326,7 +335,7 @@
     </div>
   </div>
 
-  <!-- 4. Modal Lupa Kata Laluan -->
+  <!-- Modal Lupa Kata Laluan -->
   <div id="modal-forgot-password" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 transition-all">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
@@ -357,7 +366,7 @@
     </div>
   </div>
 
-  <!-- 5. Modal Kemas Kini Kata Laluan Baharu (Recovery Session) -->
+  <!-- Modal Kemas Kini Kata Laluan Baharu -->
   <div id="modal-update-password" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100">
       <div class="pb-3 border-b border-slate-100 mb-4">
@@ -386,7 +395,7 @@
     </div>
   </div>
 
-  <!-- 6. Modal Pengesahan Tersuai (Menggantikan confirm) -->
+  <!-- Modal Pengesahan -->
   <div id="modal-confirm" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100">
       <div class="flex items-center gap-3 mb-3">
@@ -417,8 +426,17 @@
     let selectedCompanyId = '';
     let inventoryCost = null;
     let skus = [];
+    let skuDcChoice = {}; // { [skuId]: boolean }
 
-    // Notification Toast Helper
+    // Dapatkan bilangan karton dalam 1 palet (Lalai: 100)
+    function getCartonsPerPallet(sku) {
+      if (!sku || !sku.pallet_size) return 100;
+      const match = sku.pallet_size.toString().match(/\d+/);
+      const parsed = match ? parseInt(match[0], 10) : 100;
+      return (parsed && parsed > 0) ? parsed : 100;
+    }
+
+    // Toast Notifications
     function showToast(message, type = 'info') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -449,7 +467,7 @@
       document.getElementById(id).classList.add('hidden');
     }
 
-    // Custom App Confirmation Modal (Returns Promise for await showConfirmModal)
+    // Custom App Confirmation Modal (Promise Based)
     function showConfirmModal(title, message) {
       return new Promise((resolve) => {
         const titleEl = document.getElementById('confirm-title');
@@ -498,7 +516,7 @@
       }
     }
 
-    // Auth Submission (Login Only)
+    // Auth Submission
     async function handleAuthSubmit(e) {
       e.preventDefault();
       const email = document.getElementById('input-email').value.trim();
@@ -553,7 +571,7 @@
       showToast('Anda telah log keluar.', 'info');
     }
 
-    // Init Session & Event Listeners
+    // Session Initialization
     window.addEventListener('load', async () => {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
@@ -579,10 +597,8 @@
       document.getElementById('auth-view').classList.add('hidden');
       document.getElementById('app-view').classList.remove('hidden');
 
-      // Fetch or sync profile
       let { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
       
-      // Fallback if trigger hasn't completed yet
       if (!profile) {
         profile = {
           id: user.id,
@@ -593,7 +609,6 @@
       }
       currentProfile = profile;
 
-      // Update Topbar Info
       document.getElementById('user-display-name').innerText = profile.name || user.email;
       document.getElementById('user-email-text').innerText = user.email;
       
@@ -612,18 +627,28 @@
     }
 
     async function loadInitialData() {
-      // 1. Fetch Logistics Costs (Flat Rate)
+      // Dapatkan data kos logistik rasmi (Default fallback jika tiada dalam DB)
       const { data: costData } = await supabaseClient.from('sku_inventory_costs').select('*').limit(1).maybeSingle();
       if (costData) {
         inventoryCost = costData;
-        document.getElementById('cost-rate-name').innerText = costData.rate_name || 'Kadar Standard Gudang';
-        document.getElementById('cost-pallet-in').innerText = `RM ${parseFloat(costData.pallet_in_cost || 0).toFixed(2)}`;
-        document.getElementById('cost-pallet-out').innerText = `RM ${parseFloat(costData.pallet_out_cost || 0).toFixed(2)}`;
-        document.getElementById('cost-carton-out').innerText = `RM ${parseFloat(costData.carton_out_cost || 0).toFixed(2)}`;
-        document.getElementById('cost-storage').innerText = `RM ${parseFloat(costData.storage_cost_per_pallet || 0).toFixed(2)}`;
+      } else {
+        // Fallback kepada kadar rasmi terkini
+        inventoryCost = {
+          rate_name: 'Kadar Rasmi Gudang Standard',
+          pallet_in_cost: 8.50,
+          pallet_out_cost: 8.50,
+          carton_out_cost: 0.80,
+          storage_cost_per_pallet: 32.00
+        };
       }
 
-      // 2. Fetch Companies
+      document.getElementById('cost-rate-name').innerText = inventoryCost.rate_name || 'Kadar Rasmi Gudang';
+      document.getElementById('cost-pallet-in').innerText = `RM ${parseFloat(inventoryCost.pallet_in_cost || 8.50).toFixed(2)}`;
+      document.getElementById('cost-pallet-out').innerText = `RM ${parseFloat(inventoryCost.pallet_out_cost || 8.50).toFixed(2)}`;
+      document.getElementById('cost-carton-out').innerText = `RM ${parseFloat(inventoryCost.carton_out_cost || 0.80).toFixed(2)}`;
+      document.getElementById('cost-storage').innerText = `RM ${parseFloat(inventoryCost.storage_cost_per_pallet || 32.00).toFixed(2)}`;
+
+      // Ambil senarai syarikat
       const { data: compList } = await supabaseClient.from('companies').select('*').order('company_name');
       if (compList) {
         companies = compList;
@@ -686,7 +711,6 @@
     async function fetchCompanySkus() {
       if (!selectedCompanyId) return;
 
-      // Menyatakan hubungan FK !sku_id secara eksplisit bersama alias 'price_proposals'
       let { data, error } = await supabaseClient
         .from('sku_master')
         .select(`
@@ -697,7 +721,6 @@
         .eq('company_id', selectedCompanyId)
         .order('created_at', { ascending: false });
 
-      // Pelan sokongan (fallback) jika versi PostgREST memerlukan nama constraint eksplisit
       if (error && error.message && error.message.includes('relationship')) {
         const fallbackRes = await supabaseClient
           .from('sku_master')
@@ -740,17 +763,46 @@
       const isDecider = currentProfile?.role === 'decider';
       const isAdmin = currentProfile?.role === 'admin';
 
+      // Parameter kadar logistik rasmi
+      const pIn = parseFloat(inventoryCost?.pallet_in_cost ?? 8.50);
+      const pOut = parseFloat(inventoryCost?.pallet_out_cost ?? 8.50);
+      const cOut = parseFloat(inventoryCost?.carton_out_cost ?? 0.80);
+      const storage = parseFloat(inventoryCost?.storage_cost_per_pallet ?? 32.00);
+
       tbody.innerHTML = skus.map(sku => {
         const proposals = sku.price_proposals || [];
         const myProposal = proposals.find(p => p.proposed_by === currentUser.id);
         const endorsements = sku.pricing_endorsements || [];
         const myVote = endorsements.find(e => e.panel_id === currentUser.id);
 
-        // Consensus check (if >= 2 proposals and all prices identical)
+        // Harga kos asas se-karton dari database
+        const baseCostPerCarton = parseFloat(sku.cost_price || 0);
+
+        // Saiz muatan (lalai: 100 karton / palet)
+        const cartonCount = getCartonsPerPallet(sku);
+
+        // Pilihan DC (Lalai: Ya / Masuk DC)
+        if (skuDcChoice[sku.id] === undefined) {
+          skuDcChoice[sku.id] = true;
+        }
+        const isDc = skuDcChoice[sku.id];
+
+        // Pengiraan Beban Kos Logistik Se-Karton:
+        // A. Pallet Out: (Pallet In + Storage + Pallet Out) / cartonCount
+        const logisticsPalletPerCarton = isDc ? ((pIn + storage + pOut) / cartonCount) : 0;
+        
+        // B. Carton Out: (Pallet In + Storage + (Carton Out * cartonCount)) / cartonCount
+        const logisticsCartonPerCarton = isDc ? ((pIn + storage + (cOut * cartonCount)) / cartonCount) : 0;
+
+        // Kos Landed Se-Karton
+        const landedCostPallet = baseCostPerCarton + logisticsPalletPerCarton;
+        const landedCostCarton = baseCostPerCarton + logisticsCartonPerCarton;
+
+        // Consensus check (jika >= 2 cadangan dan kesemua nilai sama)
         const uniquePrices = [...new Set(proposals.map(p => parseFloat(p.proposed_price)))];
         const isConsensus = proposals.length >= 2 && uniquePrices.length === 1;
 
-        // Count votes
+        // Kiraan undian
         const endorseCount = endorsements.filter(e => e.decision === 'endorse').length;
         const rejectCount = endorsements.filter(e => e.decision === 'reject').length;
 
@@ -766,101 +818,170 @@
           statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600">${sku.status}</span>`;
         }
 
-        // Render Proposals List
-        let proposalsHtml = '';
-        if (proposals.length === 0) {
-          proposalsHtml = `<span class="text-xs text-slate-400 italic">Belum ada cadangan</span>`;
-        } else {
-          proposalsHtml = `
-            <div class="space-y-1.5 max-w-xs">
+        // Togol Pilihan Masuk DC (Segmented Control)
+        const dcToggleHtml = `
+          <div class="flex items-center justify-center">
+            <div class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-semibold">
+              <button type="button" onclick="toggleSkuDc('${sku.id}', true)" class="px-2.5 py-1 rounded-lg transition ${isDc ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}">
+                Ya
+              </button>
+              <button type="button" onclick="toggleSkuDc('${sku.id}', false)" class="px-2.5 py-1 rounded-lg transition ${!isDc ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}">
+                Tidak
+              </button>
+            </div>
+          </div>
+        `;
+
+        // Ruangan Analisis Kos Se-Karton
+        const costBreakdownHtml = isDc ? `
+          <div class="text-right space-y-1">
+            <div class="text-[11px] text-slate-500">
+              Kos Asas: <span class="font-bold text-slate-700">RM ${baseCostPerCarton.toFixed(2)} /ktn</span>
+            </div>
+            <div class="text-xs bg-slate-50 border border-slate-200 p-2 rounded-xl">
+              <div class="flex justify-between gap-4 text-slate-700">
+                <span class="text-[11px]">Pallet Out:</span>
+                <span class="font-bold text-slate-900">RM ${landedCostPallet.toFixed(2)} <span class="text-[10px] text-emerald-600 font-semibold">(+RM ${logisticsPalletPerCarton.toFixed(2)})</span></span>
+              </div>
+              <div class="flex justify-between gap-4 text-slate-700 border-t border-slate-200/60 pt-1 mt-1">
+                <span class="text-[11px]">Carton Out:</span>
+                <span class="font-bold text-indigo-700">RM ${landedCostCarton.toFixed(2)} <span class="text-[10px] text-indigo-500 font-semibold">(+RM ${logisticsCartonPerCarton.toFixed(2)})</span></span>
+              </div>
+            </div>
+            <span class="text-[9px] text-slate-400 block text-right">Berasaskan muatan: ${cartonCount} ktn/palet</span>
+          </div>
+        ` : `
+          <div class="text-right space-y-1">
+            <span class="text-xs font-bold text-slate-900 block">RM ${baseCostPerCarton.toFixed(2)} /ktn</span>
+            <span class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 inline-block">Terus / Tanpa DC (+RM 0.00)</span>
+          </div>
+        `;
+
+        // Nilai cadangan aktif oleh panel ini
+        const myCurrentPrice = myProposal ? parseFloat(myProposal.proposed_price) : '';
+
+        // Ruangan Cadangan Harga & Margin Se-Karton (Inline Direct Input)
+        const inlineProposalHtml = sku.status === 'proposal_open' ? `
+          <div class="w-72 space-y-1.5">
+            <div class="relative flex items-center">
+              <span class="absolute left-2.5 text-xs font-bold text-slate-400">RM</span>
+              <input 
+                type="number" 
+                step="0.01" 
+                min="0" 
+                id="inline-price-${sku.id}" 
+                value="${myCurrentPrice}" 
+                placeholder="0.00" 
+                oninput="calculateLiveMargin('${sku.id}', ${landedCostPallet}, ${landedCostCarton}, ${baseCostPerCarton})" 
+                class="w-full pl-9 pr-16 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+              />
+              <button 
+                type="button" 
+                onclick="submitInlineProposal('${sku.id}')" 
+                class="absolute right-1.5 px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[10px] font-bold shadow-sm transition" 
+                title="Simpan Cadangan">
+                Simpan
+              </button>
+            </div>
+            <!-- Kad Kiraan Margin Se-Karton Serta-Merta -->
+            <div id="live-margin-${sku.id}" class="text-[10px] p-2 rounded-xl border bg-slate-50 border-slate-200 text-slate-600 space-y-1">
+              ${renderLiveMarginContent(myCurrentPrice, landedCostPallet, landedCostCarton, isDc, baseCostPerCarton)}
+            </div>
+            ${proposals.length > 0 ? `
+              <div class="text-[10px] text-slate-400">
+                ${proposals.length} cadangan dimasukkan oleh panel
+              </div>
+            ` : ''}
+          </div>
+        ` : `
+          <div class="space-y-1">
+            <span class="text-xs font-bold text-slate-800 block">RM ${parseFloat(sku.final_selling_price || 0).toFixed(2)} /ktn</span>
+            <span class="text-[10px] text-slate-400">Pusingan cadangan ditutup</span>
+          </div>
+        `;
+
+        // Paparan Senarai Cadangan Panel (Untuk Decider Semak & Pilih)
+        let proposalOverviewHtml = '';
+        if (proposals.length > 0) {
+          proposalOverviewHtml = `
+            <div class="space-y-1 mt-1.5 max-w-xs">
               ${proposals.map(p => {
                 const isSelected = sku.selected_proposal_id === p.id;
                 const authorName = p.profiles?.name || 'Panel';
                 return `
-                  <div class="p-1.5 rounded-lg border text-xs flex items-center justify-between gap-2 ${isSelected ? 'bg-indigo-50 border-indigo-200 text-indigo-900 font-semibold' : 'bg-slate-50 border-slate-200 text-slate-700'}">
-                    <div>
-                      <span class="font-bold text-slate-900">RM ${parseFloat(p.proposed_price).toFixed(2)}</span>
-                      <span class="text-[10px] text-slate-500">(${authorName})</span>
-                      ${isSelected ? '<span class="ml-1 text-[10px] bg-indigo-600 text-white px-1.5 py-0.2 rounded font-bold">PILIHAN DECIDER</span>' : ''}
-                    </div>
+                  <div class="p-1.5 rounded-lg border text-[11px] flex items-center justify-between gap-1.5 ${isSelected ? 'bg-indigo-50 border-indigo-200 font-semibold' : 'bg-white border-slate-100'}">
+                    <span>RM ${parseFloat(p.proposed_price).toFixed(2)} <span class="text-[10px] text-slate-400">(${authorName})</span></span>
                     ${(isDecider || isAdmin) && sku.status === 'proposal_open' ? `
-                      <button onclick="handleSelectProposal('${sku.id}', '${p.id}', ${p.proposed_price})" class="text-[10px] font-bold px-2 py-0.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition shadow-xs">
-                        Pilih
-                      </button>
+                      <button onclick="handleSelectProposal('${sku.id}', '${p.id}', ${p.proposed_price})" class="text-[9px] font-bold px-2 py-0.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow-xs">Pilih</button>
                     ` : ''}
                   </div>
                 `;
               }).join('')}
               ${isConsensus && sku.status === 'proposal_open' ? `
-                <div class="text-[10px] bg-emerald-100 text-emerald-800 p-1.5 rounded font-bold flex items-center gap-1">
-                  <i class="ph-bold ph-check"></i> Konsensus: Sebulat Suara (RM ${uniquePrices[0].toFixed(2)})
+                <div class="text-[10px] bg-emerald-50 text-emerald-800 p-1.5 rounded-lg font-bold border border-emerald-200">
+                  ✓ Konsensus Sebulat Suara (RM ${uniquePrices[0].toFixed(2)} /ktn)
                 </div>
               ` : ''}
             </div>
           `;
         }
 
-        // Voting Info Column
+        // Kolum Keputusan & Undian
         let voteColHtml = '';
         if (sku.status === 'finalized') {
           voteColHtml = `
             <div class="text-center">
-              <span class="text-base font-extrabold text-emerald-600 block">RM ${parseFloat(sku.final_selling_price || 0).toFixed(2)}</span>
-              <span class="text-[10px] text-slate-400">Harga Jual Rasmi</span>
+              <span class="text-sm font-extrabold text-emerald-600 block">RM ${parseFloat(sku.final_selling_price || 0).toFixed(2)}</span>
+              <span class="text-[10px] text-slate-400">Harga Rasmi /ktn</span>
             </div>
           `;
         } else if (sku.status === 'voting_open') {
           voteColHtml = `
             <div class="text-center">
-              <div class="flex items-center justify-center gap-2 mb-1">
-                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+              <div class="flex items-center justify-center gap-1.5 mb-1">
+                <span class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">
                   <i class="ph-bold ph-thumbs-up"></i> ${endorseCount}
                 </span>
-                <span class="text-xs font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
+                <span class="text-[11px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-200">
                   <i class="ph-bold ph-thumbs-down"></i> ${rejectCount}
                 </span>
               </div>
-              <span class="text-[10px] text-slate-400">Total Undian: ${endorseCount + rejectCount}</span>
+              <span class="text-[10px] text-slate-400">Undian: ${endorseCount + rejectCount}</span>
             </div>
           `;
         } else {
           voteColHtml = `<span class="text-xs text-slate-400 text-center block">-</span>`;
         }
 
-        // Action Column Buttons
+        // Kolum Tindakan
         let actionColHtml = '';
         if (sku.status === 'proposal_open') {
           actionColHtml = `
             <div class="flex flex-col items-end gap-1.5">
-              <button onclick="openProposalModal('${sku.id}', '${sku.sku_name.replace(/'/g, "\\'")}', ${sku.cost_price}, '${myProposal ? myProposal.proposed_price : ''}')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1 transition">
-                <i class="ph-bold ph-tag"></i>
-                <span>${myProposal ? 'Kemas Kini' : 'Cadang Harga'}</span>
-              </button>
-              ${myProposal ? `<span class="text-[10px] text-slate-400">Anda cadang: RM ${parseFloat(myProposal.proposed_price).toFixed(2)}</span>` : ''}
               ${isConsensus && (isDecider || isAdmin) ? `
                 <button onclick="handleFinalizeConsensus('${sku.id}', ${uniquePrices[0]})" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold shadow-xs">
                   Sahkan Konsensus
                 </button>
               ` : ''}
+              <button onclick="openProposalModal('${sku.id}', '${sku.sku_name.replace(/'/g, "\\'")}', ${baseCostPerCarton}, '${myProposal ? myProposal.proposed_price : ''}')" class="text-[10px] text-slate-500 hover:text-indigo-600 underline">
+                Tambah Justifikasi
+              </button>
             </div>
           `;
         } else if (sku.status === 'voting_open') {
-          // Voting phase actions
           actionColHtml = `
-            <div class="flex flex-col items-end gap-2">
-              <div class="flex items-center gap-1.5">
-                <button onclick="castVote('${sku.id}', 'endorse')" class="px-2.5 py-1 text-xs font-bold rounded-lg border transition flex items-center gap-1 ${myVote?.decision === 'endorse' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white hover:bg-emerald-50 text-emerald-700 border-emerald-300'}">
+            <div class="flex flex-col items-end gap-1.5">
+              <div class="flex items-center gap-1">
+                <button onclick="castVote('${sku.id}', 'endorse')" class="px-2.5 py-1 text-xs font-bold rounded-lg border transition ${myVote?.decision === 'endorse' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white hover:bg-emerald-50 text-emerald-700 border-emerald-300'}">
                   <i class="ph-bold ph-thumbs-up"></i>
-                  <span>Setuju</span>
                 </button>
-                <button onclick="castVote('${sku.id}', 'reject')" class="px-2.5 py-1 text-xs font-bold rounded-lg border transition flex items-center gap-1 ${myVote?.decision === 'reject' ? 'bg-rose-600 text-white border-rose-600' : 'bg-white hover:bg-rose-50 text-rose-700 border-rose-300'}">
+                <button onclick="castVote('${sku.id}', 'reject')" class="px-2.5 py-1 text-xs font-bold rounded-lg border transition ${myVote?.decision === 'reject' ? 'bg-rose-600 text-white border-rose-600' : 'bg-white hover:bg-rose-50 text-rose-700 border-rose-300'}">
                   <i class="ph-bold ph-thumbs-down"></i>
-                  <span>Bantah</span>
                 </button>
               </div>
               ${(isDecider || isAdmin) ? `
-                <button onclick="handleFinalizeDecision('${sku.id}')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white rounded-md text-[10px] font-bold shadow-xs">
-                  Tutup & Muktamadkan
+                <button onclick="handleFinalizeDecision('${sku.id}')" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[9px] font-bold shadow-xs">
+                  Muktamadkan
                 </button>
               ` : ''}
             </div>
@@ -871,26 +992,28 @@
 
         return `
           <tr class="hover:bg-slate-50/75 transition">
-            <td class="py-4 px-4">
-              <p class="font-bold text-slate-800">${sku.sku_name}</p>
+            <td class="py-3.5 px-4">
+              <p class="font-bold text-slate-800 leading-tight">${sku.sku_name}</p>
               <p class="text-xs font-mono text-slate-400">${sku.sku_code}</p>
+              <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-medium">${cartonCount} ktn/palet</span>
             </td>
-            <td class="py-4 px-4 text-center text-xs text-slate-600">
-              <span class="bg-slate-100 px-2 py-1 rounded-md">${sku.pallet_size || 'N/A'}</span>
+            <td class="py-3.5 px-4 text-center">
+              ${dcToggleHtml}
             </td>
-            <td class="py-4 px-4 text-right">
-              <span class="font-extrabold text-slate-900">RM ${parseFloat(sku.cost_price).toFixed(2)}</span>
+            <td class="py-3.5 px-4">
+              ${costBreakdownHtml}
             </td>
-            <td class="py-4 px-4 text-center">
+            <td class="py-3.5 px-4 text-center">
               ${statusBadge}
             </td>
-            <td class="py-4 px-4">
-              ${proposalsHtml}
+            <td class="py-3.5 px-4">
+              ${inlineProposalHtml}
+              ${proposalOverviewHtml}
             </td>
-            <td class="py-4 px-4">
+            <td class="py-3.5 px-4">
               ${voteColHtml}
             </td>
-            <td class="py-4 px-4 text-right">
+            <td class="py-3.5 px-4 text-right">
               ${actionColHtml}
             </td>
           </tr>
@@ -898,10 +1021,99 @@
       }).join('');
     }
 
+    // Togol Masuk DC (Ya / Tidak)
+    function toggleSkuDc(skuId, isDc) {
+      skuDcChoice[skuId] = isDc;
+      renderSkuTable();
+    }
+
+    // Kira Margin Serta-Merta Semasa Menaip
+    function calculateLiveMargin(skuId, landedCostPallet, landedCostCarton, baseCostPerCarton) {
+      const inputEl = document.getElementById(`inline-price-${skuId}`);
+      const containerEl = document.getElementById(`live-margin-${skuId}`);
+      if (!inputEl || !containerEl) return;
+
+      const sellingPrice = parseFloat(inputEl.value);
+      const isDc = skuDcChoice[skuId] ?? true;
+      containerEl.innerHTML = renderLiveMarginContent(sellingPrice, landedCostPallet, landedCostCarton, isDc, baseCostPerCarton);
+    }
+
+    // Render Templat Kiraan Margin Se-Karton
+    function renderLiveMarginContent(sellingPrice, costPallet, costCarton, isDc, baseCost) {
+      if (!sellingPrice || isNaN(sellingPrice) || sellingPrice <= 0) {
+        return `<span class="italic text-slate-400 text-[10px]">Masukkan cadangan harga se-karton untuk kiraan margin</span>`;
+      }
+
+      if (!isDc) {
+        const profit = sellingPrice - baseCost;
+        const marginPct = (profit / sellingPrice) * 100;
+        const isPositive = profit >= 0;
+        return `
+          <div class="flex justify-between items-center ${isPositive ? 'text-emerald-700' : 'text-rose-600'} font-semibold">
+            <span>Untung Bersih (Tanpa DC):</span>
+            <span>RM ${profit.toFixed(2)} (${marginPct.toFixed(1)}%)</span>
+          </div>
+        `;
+      }
+
+      // Pengiraan Masuk DC Se-Karton (Pallet Out & Carton Out)
+      const profitPallet = sellingPrice - costPallet;
+      const marginPallet = (profitPallet / sellingPrice) * 100;
+
+      const profitCarton = sellingPrice - costCarton;
+      const marginCarton = (profitCarton / sellingPrice) * 100;
+
+      return `
+        <div class="flex justify-between items-center text-[10px]">
+          <span class="text-slate-500 font-medium">Margin (Pallet Out):</span>
+          <span class="font-bold ${profitPallet >= 0 ? 'text-emerald-700' : 'text-rose-600'}">
+            RM ${profitPallet.toFixed(2)} (${marginPallet.toFixed(1)}%)
+          </span>
+        </div>
+        <div class="flex justify-between items-center text-[10px] border-t border-slate-200/60 pt-1">
+          <span class="text-slate-500 font-medium">Margin (Carton Out):</span>
+          <span class="font-bold ${profitCarton >= 0 ? 'text-indigo-700' : 'text-rose-600'}">
+            RM ${profitCarton.toFixed(2)} (${marginCarton.toFixed(1)}%)
+          </span>
+        </div>
+      `;
+    }
+
+    // Simpan Cadangan Harga Terus Dari Jadual (Inline Submit)
+    async function submitInlineProposal(skuId) {
+      const inputEl = document.getElementById(`inline-price-${skuId}`);
+      if (!inputEl) return;
+
+      const proposedPrice = parseFloat(inputEl.value);
+      if (isNaN(proposedPrice) || proposedPrice <= 0) {
+        showToast('Sila masukkan nilai harga jualan se-karton yang sah.', 'error');
+        return;
+      }
+
+      const isDc = skuDcChoice[skuId] ?? true;
+      const dcText = isDc ? 'SKU Masuk DC (Kadar Kos Se-Karton)' : 'SKU Tidak Masuk DC (Kos Asas Sahaja)';
+
+      try {
+        const { error } = await supabaseClient.from('price_proposals').upsert({
+          sku_id: skuId,
+          proposed_by: currentUser.id,
+          proposed_price: proposedPrice,
+          justification: `Penetapan: ${dcText}`
+        }, { onConflict: 'sku_id,proposed_by' });
+
+        if (error) throw error;
+
+        showToast('Cadangan harga se-karton berjaya disimpan!', 'success');
+        await fetchCompanySkus();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
     function openProposalModal(skuId, skuName, costPrice, existingPrice) {
       document.getElementById('prop-sku-id').value = skuId;
       document.getElementById('prop-sku-name').innerText = skuName;
-      document.getElementById('prop-cost-price').innerText = `RM ${parseFloat(costPrice).toFixed(2)}`;
+      document.getElementById('prop-cost-price').innerText = `RM ${parseFloat(costPrice).toFixed(2)} /karton`;
       document.getElementById('prop-price-input').value = existingPrice || '';
       document.getElementById('prop-justification-input').value = '';
       openModal('modal-proposal');
@@ -914,7 +1126,7 @@
       const justification = document.getElementById('prop-justification-input').value.trim();
 
       if (isNaN(proposedPrice) || proposedPrice <= 0) {
-        showToast('Sila masukkan harga jualan yang sah.', 'error');
+        showToast('Sila masukkan harga jualan se-karton yang sah.', 'error');
         return;
       }
 
@@ -936,11 +1148,11 @@
       }
     }
 
-    // Decider chooses shortlisted proposal to open voting
+    // Decider Memilih Cadangan Untuk Dibuka Undian
     async function handleSelectProposal(skuId, proposalId, price) {
       const confirmed = await showConfirmModal(
         'Buka Undian Rasmi',
-        `Adakah anda ingin membuka undian bagi cadangan harga RM ${price.toFixed(2)} ini kepada seluruh ahli panel?`
+        `Adakah anda ingin membuka undian bagi cadangan harga RM ${price.toFixed(2)} /karton ini kepada seluruh ahli panel?`
       );
       if (!confirmed) return;
 
@@ -961,11 +1173,11 @@
       }
     }
 
-    // Direct Finalize on Consensus
+    // Muktamadkan Terus Sekiranya Konsensus Dicapai
     async function handleFinalizeConsensus(skuId, consensusPrice) {
       const confirmed = await showConfirmModal(
         'Sahkan Konsensus',
-        `Sahkan harga jualan rasmi RM ${consensusPrice.toFixed(2)} secara sebulat suara tanpa undian?`
+        `Sahkan harga jualan rasmi RM ${consensusPrice.toFixed(2)} /karton secara sebulat suara tanpa undian?`
       );
       if (!confirmed) return;
 
@@ -986,7 +1198,7 @@
       }
     }
 
-    // Vote Endorsement Action
+    // Buat Undian Endorsement
     async function castVote(skuId, decision) {
       try {
         const { error } = await supabaseClient.from('pricing_endorsements').upsert({
@@ -1003,7 +1215,7 @@
       }
     }
 
-    // Finalize after Voting
+    // Muktamadkan Harga Selepas Undian Selesai
     async function handleFinalizeDecision(skuId) {
       const sku = skus.find(s => s.id === skuId);
       const selectedProp = sku?.price_proposals?.find(p => p.id === sku.selected_proposal_id);
@@ -1016,7 +1228,7 @@
 
       const confirmed = await showConfirmModal(
         'Muktamadkan Harga',
-        `Adakah anda pasti mahu menutup undian dan memuktamadkan harga jualan pada RM ${parseFloat(finalPrice).toFixed(2)}?`
+        `Adakah anda pasti mahu menutup undian dan memuktamadkan harga jualan pada RM ${parseFloat(finalPrice).toFixed(2)} /karton?`
       );
       if (!confirmed) return;
 
@@ -1037,6 +1249,7 @@
       }
     }
 
+    // Tambah Syarikat Baharu (Admin)
     async function handleCreateCompany(e) {
       e.preventDefault();
       const company_name = document.getElementById('comp-name').value.trim();
@@ -1063,11 +1276,12 @@
       }
     }
 
+    // Tambah SKU Baharu (Admin)
     async function handleCreateSku(e) {
       e.preventDefault();
       const company_id = document.getElementById('new-sku-company').value;
       const sku_code = document.getElementById('new-sku-code').value.trim().toUpperCase();
-      const pallet_size = document.getElementById('new-sku-pallet').value.trim();
+      const pallet_size = document.getElementById('new-sku-pallet').value.trim() || '100';
       const sku_name = document.getElementById('new-sku-name').value.trim();
       const cost_price = parseFloat(document.getElementById('new-sku-cost').value);
 
@@ -1086,10 +1300,10 @@
         closeModal('modal-add-sku');
         document.getElementById('new-sku-code').value = '';
         document.getElementById('new-sku-name').value = '';
+        document.getElementById('new-sku-pallet').value = '';
         document.getElementById('new-sku-cost').value = '';
         showToast('SKU berjaya didaftarkan!', 'success');
         
-        // Auto select company if different
         if (selectedCompanyId !== company_id) {
           document.getElementById('company-select').value = company_id;
           await onCompanySelected(company_id);
